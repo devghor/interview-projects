@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: rest-api-starter
+  description: This documentaion describes all the public and protected resources.
+
+servers:
+  - url: https://localhost:8000/api/v1
+    description: local server
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        roleId:
+          type: integer
+        password:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+
+paths:
+  /login:
+    post:
+      get:
+      tags:
+        - Auth
+      summary: login to the system
+      consumes:
+        - application/x-www-form-urlencoded
+      description: >
+        User can login to the system by this resource
+        
+      requestBody:
+        description: |
+          | Field | Description  |
+          | :--- | ---:|
+          | email  | User email address |
+          | password  | User password |
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+
+              required:
+                - email
+                - password
+            example:
+              email: hafij.to@gmail.com
+              password: 123456
+
+  /users:
+    post:
+      get:
+      tags:
+        - Users
+      summary: Create a new user
+      consumes:
+        - application/x-www-form-urlencoded
+      description: >
+        A detailed description of the operation.
+        Use markdown for rich text representation,
+        such as **bold**, *italic*, and [links](https://swagger.io).
+      requestBody:
+        description: |
+          | Field | Description  |
+          | :--- | ---:|
+          | firstName | This is the firstName |
+          | lastName  | User last name |
+          | email  | User email address |
+          | roleId  | User roleId |
+          | password  | User password |
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                roleId:
+                  type: integer
+                password:
+                  type: string
+
+              required:
+                - firstName
+                - lastName
+                - email
+                - roleId
+                - password
+            example:
+              firstName: Hafijur
+              lastName: Rahaman
+              email: hafij.to@gmail.com
+              roleId: 1
+              password: 123456
+
+ 

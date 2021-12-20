@@ -1,0 +1,70 @@
+version: "3.9"
+services:
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    container_name: rest-api-starter-app
+    restart: unless-stopped
+    working_dir: /var/www
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/var/www
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./docker/php/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+    networks:
+      - app-network
+
+  db:
+    image: mysql:5.7
+    container_name: rest-api-starter-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: rest-api-starter-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  phpmyadmin:
+    container_name: rest-api-starter-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 7000:80
+    links:
+      - "db"
+    environment:
+      UPLOAD_LIMIT: 3000000000
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysqldata:
